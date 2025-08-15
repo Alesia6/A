@@ -1,6 +1,6 @@
 import { Router } from "express";
-import User from "../models/User";
-import Transaction from "../models/Transaction";
+import User from "../models/User.js";
+import Transaction from "../models/Transaction.js";
 
 const router =Router();
 
