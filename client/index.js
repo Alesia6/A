@@ -1,11 +1,12 @@
 import express from "express";
 import mongoose from "mongoose";
+import cors from "cors";
 import loginRoutes from "./routes/login.js";
 import accountRoutes from "./routes/account.js";
 
 
 const app = express();
-
+app.use(cors({ origin: "http://localhost:5173" }));
 app.use(express.json());
 
 app.use("/api", loginRoutes);
