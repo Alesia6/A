@@ -38,7 +38,6 @@ function Login(){
                 <div>
                     <label htmlFor="cardNumber">Card Number</label>
                     <input type="text" 
-                    id="cardNumber"
                     value={cardNumber}
                     onChange={(e) => setCardNumber(e.target.value)}
                     />
@@ -46,7 +45,6 @@ function Login(){
                 <div>
                     <label htmlFor="pin">Pin:</label>
                     <input type="password" 
-                    id="pin"
                     value={pin}
                     onChange={(e) => setPin(e.target.value)}
                      />

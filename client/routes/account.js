@@ -5,7 +5,7 @@ import Transaction from "../models/Transaction.js";
 const router =Router();
 
 function getUserId(req) {
-    return req.body.getUserId;
+    return req.body.userId;
 }
 
 router.get('/balance', async (req, res) => {
@@ -45,7 +45,7 @@ router.post('/deposit', async (req, res) =>{
 });
 
 
-router.post('./withdraw', async (req, res) => {
+router.post('/withdraw', async (req, res) => {
 const {userId, amountCents} = req.body;
 const amount = Number(amountCents);
 

@@ -1,4 +1,5 @@
 import { Router } from "express";
+import bcrypt from "bcryptjs";
 import User from "../models/User.js";
 
 
@@ -13,7 +14,18 @@ router.post('/login', async (req, res) => {
     const user = await User.findOne({cardNumber});
     if(!user)
      return res.send("Incorrect card number or pin");
-    res.send(`Your balance is ${user.balanceCents} cents`);
+
+    const ok = await bcrypt.compare(pin, user.pinHash);
+    if(!ok) return res.send('Incorrect card number or pin');
+
+    res.json({
+        success: true,
+        account: {
+        userId: user._id.toString(),
+        cardNumber: user.cardNumber,
+        balanceCents: user.balanceCents,
+        }
+    });
 });
 
 export default router;
