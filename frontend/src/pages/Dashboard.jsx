@@ -6,86 +6,145 @@ function Dashboard() {
   const location = useLocation();
   const account = location.state?.account;
 
-  const [balance, setBalance] = useState(account?.balanceCents || 0);
+  const [balanceDollars, setBalanceDollars] = useState(
+    account ? account.balanceCents / 100 : 0
+  );
+  
   const [depositAmount, setDepositAmount] = useState("");
   const [withdrawAmount, setWithdrawAmount] = useState("");
   const [message, setMessage] = useState("");
+  const [isProcessing, setIsProcessing] = useState(false);
+
+  const showMoney = (dollars) => `$${dollars.toFixed(2)}`;
 
   const handleDeposit = async () => {
+    if (isProcessing) return;
+    
     try {
+      const dollarsToAdd = Number(depositAmount);
+      
+      if (isNaN(dollarsToAdd)) {
+        setMessage("Please enter a number");
+        return;
+      }
+      if (dollarsToAdd <= 0) {
+        setMessage("Amount must be positive");
+        return;
+      }
+
+      setIsProcessing(true);
+      setMessage("Adding amount...");
+
+      const centsToAdd = Math.round(dollarsToAdd * 100);
+      
       const res = await axios.post("http://localhost:3000/api/deposit", {
-        userId: account.userId,       
-        amountCents: parseInt(depositAmount) * 100, 
+        userId: account.userId,
+        amountCents: centsToAdd,
       });
 
-      if (res.data.balanceCents !== undefined) {
-        setBalance(res.data.balanceCents);   
-        setMessage("Deposit successful!");
-        setDepositAmount(""); // Clear input after success
-      } else {
-        setMessage("Deposit failed");
-      }
+      const newBalanceDollars = res.data.balanceCents / 100;
+      setBalanceDollars(newBalanceDollars);
+      
+      setMessage(`Deposit: ${showMoney(dollarsToAdd)}! New balance: ${showMoney(newBalanceDollars)}`);
+      setDepositAmount("");
     } catch (err) {
-      console.error(err);
-      setMessage("Something went wrong");
+      setMessage("Failed to add amount");
+    } finally {
+      setIsProcessing(false);
     }
   };
 
   const handleWithdraw = async () => {
+    if (isProcessing) return;
+    
     try {
-      const amountNum = parseInt(withdrawAmount);
-      if (isNaN(amountNum)) {
-        setMessage("Please enter a valid amount");
+      const dollarsToRemove = Number(withdrawAmount);
+      
+      if (isNaN(dollarsToRemove)) {
+        setMessage("Please enter a number");
+        return;
+      }
+      if (dollarsToRemove <= 0) {
+        setMessage("Amount must be positive");
+        return;
+      }
+      if (dollarsToRemove > balanceDollars) {
+        setMessage(`You only have ${showMoney(balanceDollars)}!`);
         return;
       }
 
+      setIsProcessing(true);
+      setMessage("Withdrawing...");
+
+      const centsToRemove = Math.round(dollarsToRemove * 100);
+      
       const res = await axios.post("http://localhost:3000/api/withdraw", {
-        userId: account.userId,       
-        amountCents: amountNum * 100, 
+        userId: account.userId,
+        amountCents: centsToRemove,
       });
 
-      if (res.data.balanceCents !== undefined) {
-        setBalance(res.data.balanceCents);   
-        setMessage("Withdrawal successful!");
-        setWithdrawAmount(""); // Clear input after success
-      } else {
-        setMessage("Withdrawal failed");
-      }
+      const newBalanceDollars = res.data.balanceCents / 100;
+      setBalanceDollars(newBalanceDollars);
+      
+      setMessage(`Withdrawal: ${showMoney(dollarsToRemove)}! New balance: ${showMoney(newBalanceDollars)}`);
+      setWithdrawAmount("");
     } catch (err) {
-      console.error(err);
-      setMessage("Something went wrong");
+      setMessage("Failed to withdraw money");
+    } finally {
+      setIsProcessing(false);
     }
   };
 
   if (!account) {
-    return <p>Please log in first!</p>;
+    return (
+      <div>
+        <h2>Please log in</h2>
+        <p>You need to log in to see your money</p>
+      </div>
+    );
   }
 
   return (
     <div>
-      <h2>Dashboard</h2>
-      <p>Welcome, card number: {account.cardNumber}</p>
-      <p>Balance: ${balance / 100}</p>
+      <h2>Your Bank Account</h2>
+      
+      <div>
+        <p>Card: {account.cardNumber}</p>
+        <p>Balance: {showMoney(balanceDollars)}</p>
+      </div>
 
-      <h3>Deposit Money</h3>
-      <input
-        type="number"
-        value={depositAmount}
-        onChange={(e) => setDepositAmount(e.target.value)}
-        placeholder="Enter amount"
-      />
-      <button onClick={handleDeposit}>Deposit</button>
+      <div>
+        <h3>Deposit</h3>
+        <input
+          type="number"
+          value={depositAmount}
+          onChange={(e) => setDepositAmount(e.target.value)}
+          placeholder="0.00"
+          disabled={isProcessing}/>
+          
+        <button 
+          onClick={handleDeposit}
+          disabled={!depositAmount || isProcessing}>
+          {isProcessing ? "Depositing" : "Deposit"}
+        </button>
+      </div>
 
-      <hr />
+      <div>
+        <h3>Withdraw</h3>
+        <input
+          type="number"
+          value={withdrawAmount}
+          onChange={(e) => setWithdrawAmount(e.target.value)}
+          placeholder="0.00"
+          disabled={isProcessing}/>
 
-      <h3>Withdraw Money</h3>
-      <input
-        type="number"
-        value={withdrawAmount}
-        onChange={(e) => setWithdrawAmount(e.target.value)}
-        placeholder="Enter amount"
-      />
-      <button onClick={handleWithdraw}>Withdraw</button>
+        <button 
+          onClick={handleWithdraw}
+          disabled={!withdrawAmount || isProcessing} >
+
+          {isProcessing ? "Withdrawing..." : "Withdraw"}
+        </button>
+      </div>
 
       {message && <p>{message}</p>}
     </div>

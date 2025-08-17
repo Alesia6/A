@@ -10,8 +10,7 @@ function getUserId(req) {
 
 router.get('/balance', async (req, res) => {
     const userId = getUserId(req);
-    if(!userId) return 
-    res.send('userId is required!');
+    if(!userId) return res.send('userId is required!');
 
     const user = await User.findById(userId).select("cardNumber balanceCents");
     if(!user) return res.send('user not found');
