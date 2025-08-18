@@ -1,6 +1,8 @@
+import React from "react";
 import { useState } from "react";
 import { useNavigate} from "react-router-dom";
 import axios from "axios";
+import './Login.css';
 
 
 
@@ -32,7 +34,7 @@ function Login(){
     };
     return(
 
-        <div>
+        <div className="login-container">
             <h2>Login Form</h2>
             <form onSubmit={handleSubmit}>
                 <div>

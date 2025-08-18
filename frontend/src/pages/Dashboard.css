@@ -1,0 +1,76 @@
+/* Container for the whole dashboard */
+.dashboard-container {
+  margin: 20px auto;
+  max-width: 500px;
+  background-color: #ffffff;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+/* Each section (balance, deposit, withdraw, transactions) */
+.dashboard-section {
+  margin-top: 20px;
+}
+
+/* Inputs */
+input[type="number"] {
+  width: 120px;
+  padding: 8px;
+  margin-right: 10px;
+  border-radius: 6px;
+  border: 1px solid #dcdde1;
+}
+
+/* Buttons */
+button {
+  padding: 8px 16px;
+  border: none;
+  border-radius: 6px;
+  background-color: #4cd137;
+  color: white;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+button:hover:not(:disabled) {
+  background-color: #44bd32;
+}
+
+button:disabled {
+  background-color: #7f8fa6;
+  cursor: not-allowed;
+}
+
+/* Messages */
+.message {
+  color: #e84118;
+  font-weight: bold;
+  margin: 10px 0;
+}
+
+/* Transactions list */
+ul {
+  list-style: none;
+  padding: 0;
+}
+
+li {
+  padding: 6px 0;
+  border-bottom: 1px solid #dcdde1;
+}
+
+li:last-child {
+  border-bottom: none;
+}
+
+/* Logout button */
+.logout-btn {
+  background-color: #e84118;
+  width: 100%;
+  margin-top: 20px;
+}
+
+.logout-btn:hover {
+  background-color: #c23616;
+}

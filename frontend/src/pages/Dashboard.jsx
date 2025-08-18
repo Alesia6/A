@@ -2,6 +2,7 @@ import { useLocation } from "react-router-dom";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import "./Dashboard.css";
 
 function Dashboard() {
   const location = useLocation();
@@ -123,7 +124,7 @@ function Dashboard() {
 
   if (!account) {
     return (
-      <div>
+      <div className="container">
         <h2>Please log in</h2>
         <p>You need to log in to see your money</p>
       </div>
@@ -131,15 +132,17 @@ function Dashboard() {
   }
 
   return (
-    <div>
+    <div className="dashboard-container">
+  
+  
       <h2>Your Bank Account</h2>
       
-      <div>
+      <div className="dashboard-section">
         <p>Card: {account.cardNumber}</p>
         <p>Balance: {showMoney(balanceDollars)}</p>
       </div>
 
-      <div>
+      <div className="dashboard-section">
         <h3>Deposit</h3>
         <input
           type="number"
@@ -155,7 +158,7 @@ function Dashboard() {
         </button>
       </div>
 
-      <div>
+      <div className="dashboard-section">
         <h3>Withdraw</h3>
         <input
           type="number"
@@ -172,9 +175,9 @@ function Dashboard() {
         </button>
       </div>
 
-      {message && <p>{message}</p>}
+      {message && <p className="message">{message}</p>}
 
-      <div>
+      <div className="dashboard-section">
         <h3>Last Transactions</h3>
         <ul>
           {transactions.map(tx => (
@@ -187,11 +190,12 @@ function Dashboard() {
         </ul>
       </div>
 
-<button onClick={handleLogout} style={{marginTop: "20px"}}>
+<button onClick={handleLogout } className="logout-btn" style={{marginTop: "20px"}}>
   Log Out
 </button>
 
     </div>
+ 
   );
 }
 
