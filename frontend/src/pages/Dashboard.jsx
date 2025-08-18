@@ -1,10 +1,12 @@
 import { useLocation } from "react-router-dom";
 import { useEffect, useState } from "react";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 function Dashboard() {
   const location = useLocation();
   const account = location.state?.account;
+  const navigate = useNavigate();
 
   const [balanceDollars, setBalanceDollars] = useState(
     account ? account.balanceCents / 100 : 0
@@ -115,6 +117,10 @@ function Dashboard() {
     }
   };
 
+  const handleLogout =() => {
+    navigate("/login", {replace: true});
+  }
+
   if (!account) {
     return (
       <div>
@@ -180,6 +186,11 @@ function Dashboard() {
           ))}
         </ul>
       </div>
+
+<button onClick={handleLogout} style={{marginTop: "20px"}}>
+  Log Out
+</button>
+
     </div>
   );
 }
