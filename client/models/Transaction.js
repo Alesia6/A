@@ -7,6 +7,6 @@ const transactionSchema = new mongoose.Schema({
     amountCents: {type: Number, required: true},
     balanceAfterCents: {type: Number, required: true},
 },
-{timestamp: true});
+{timestamps: true});
 
 export default mongoose.model("Transaction", transactionSchema);

@@ -39,7 +39,9 @@ router.post('/deposit', async (req, res) =>{
         amountCents: amount,
         balanceAfterCents: user.balanceCents,
     });
-      res.json({ balanceCents: user.balanceCents, transactionId: tx._id });
+      res.json({ balanceCents: user.balanceCents, transactionId: tx._id,
+        createdAt: tx.createdAt
+       });
 
 });
 
@@ -69,11 +71,13 @@ const tx = await Transaction.create({
     amountCents: amount,
     balanceAfterCents: user.balanceCents,
 })
- res.json({ balanceCents: user.balanceCents, transactionId: tx._id });
+ res.json({ balanceCents: user.balanceCents, transactionId: tx._id,
+     createdAt: tx.createdAt
+  });
 });
 
 router.get('/transactions', async (req, res) => {
-    const userId = getUserId(req);
+    const userId = req.query.userId;
     const limit = Math.min(Number(req.query.limit) || 20, 100);
     if (!userId) return res.send('userId is required');
     const txs = await Transaction.find({ user: userId })

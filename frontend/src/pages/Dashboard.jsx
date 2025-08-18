@@ -1,5 +1,5 @@
 import { useLocation } from "react-router-dom";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import axios from "axios";
 
 function Dashboard() {
@@ -14,8 +14,27 @@ function Dashboard() {
   const [withdrawAmount, setWithdrawAmount] = useState("");
   const [message, setMessage] = useState("");
   const [isProcessing, setIsProcessing] = useState(false);
+  const [transactions, setTransactions] = useState([]);
+
+  useEffect(() => {
+  if (account) {
+    axios.get("http://localhost:3000/api/transactions", {
+      params: { userId: account.userId }
+    })
+    .then(res => setTransactions(res.data))
+    .catch(() => setMessage("Can't load transactions!"));
+  }
+}, [account]);
 
   const showMoney = (dollars) => `$${dollars.toFixed(2)}`;
+
+  const fetchTransactions = () => {
+  axios.get("http://localhost:3000/api/transactions", {
+    params: { userId: account.userId }
+  })
+  .then(res => setTransactions(res.data))
+  .catch(() => setMessage("Could not refresh transactions"));
+};
 
   const handleDeposit = async () => {
     if (isProcessing) return;
@@ -50,6 +69,7 @@ function Dashboard() {
     } catch (err) {
       setMessage("Failed to add amount");
     } finally {
+      fetchTransactions();
       setIsProcessing(false);
     }
   };
@@ -121,7 +141,7 @@ function Dashboard() {
           onChange={(e) => setDepositAmount(e.target.value)}
           placeholder="0.00"
           disabled={isProcessing}/>
-          
+
         <button 
           onClick={handleDeposit}
           disabled={!depositAmount || isProcessing}>
@@ -147,6 +167,19 @@ function Dashboard() {
       </div>
 
       {message && <p>{message}</p>}
+
+      <div>
+        <h3>Last Transactions</h3>
+        <ul>
+          {transactions.map(tx => (
+            <li key={tx._id}>
+              {tx.type === "DEPOSIT" ? "+" : "-" }
+              {showMoney(tx.amountCents / 100)} -
+            {new Date(tx.createdAt).toLocaleDateString()} {new Date(tx.createdAt).toLocaleTimeString()}
+            </li>
+          ))}
+        </ul>
+      </div>
     </div>
   );
 }
